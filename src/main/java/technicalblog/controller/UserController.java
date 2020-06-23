@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import technicalblog.PostService;
+import technicalblog.UserService;
 import technicalblog.model.Post;
 import technicalblog.model.User;
 
@@ -17,6 +18,9 @@ public class UserController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private UserService userService;
+
     @RequestMapping("users/login")
     public String login() {
         return "users/login";
@@ -27,9 +31,14 @@ public class UserController {
         return "users/registration";
     }
 
-    @RequestMapping(value = "users/login", method= RequestMethod.POST)
+    @RequestMapping(value = "users/login", method=RequestMethod.POST)
     public String loginUser(User user) {
-        return "redirect:/posts";
+        if(userService.login(user)) {
+            return "redirect:/posts";
+        }
+        else {
+            return "users/login";
+        }
     }
 
     @RequestMapping(value = "users/logout", method= RequestMethod.POST)
@@ -39,5 +48,11 @@ public class UserController {
             model.addAttribute("posts", posts);
 
         return "index";
+
+    }
+
+    @RequestMapping(value = "users/registration", method=RequestMethod.POST)
+    public String registerUser(User user) {
+        return "users/login";
     }
 }
